@@ -3,7 +3,7 @@
 /******************************/
 
 * set globals 
-global mdata "/Users/sankalpsharma/Library/CloudStorage/GoogleDrive-ssharma9@usc.edu/My Drive/fall-2023/macro/macro-pset-4/raw"
+global mdata "/Users/sankalpsharma/Library/CloudStorage/GoogleDrive-ssharma9@usc.edu/My Drive/fall-2023/macro/macro-pset-4/growth-accounting/data"
 
 **********
 * 1. USA *
@@ -12,10 +12,10 @@ global mdata "/Users/sankalpsharma/Library/CloudStorage/GoogleDrive-ssharma9@usc
 * Real GDP 
 
 /* import real GDP data */
-import excel "$mdata/us/GDPCA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+import excel "$mdata/raw/us/GDPCA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
 
 /* gen country variable */
-gen country="USA"
+gen country = "USA"
 
 /* gen year variable */
 gen year = year(observation_date)
@@ -32,7 +32,7 @@ save `usa_rgdp'
 * Nominal GDP data 
 
 /* import nominal GDP data */
-import excel "$mdata/us/GDPA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+import excel "$mdata/raw/us/GDPA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
 
 /* gen country variable */
 gen country = "USA"
@@ -52,7 +52,7 @@ save `usa_ngdp'
 * Price Deflator
 
 /* import raw price deflator data */
-import excel "$mdata/us/A191RD3A086NBEA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+import excel "$mdata/raw/us/A191RD3A086NBEA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
 
 /* gen country variable */
 gen country = "USA"
@@ -72,7 +72,7 @@ save `usa_pt'
 * Hours worked
 
 /* import raw data for hours worked */
-import excel "$mdata/us/B4701C0A222NBEA.xls", sheet("FRED Graph") cellrange(A11:B85) firstrow clear
+import excel "$mdata/raw/us/B4701C0A222NBEA.xls", sheet("FRED Graph") cellrange(A11:B85) firstrow clear
 
 /* gen country variable */
 gen country = "USA"
@@ -92,7 +92,7 @@ save `usa_ht'
 * Investment
 
 /* import investment data */
-import excel "$mdata/us/GPDIA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+import excel "$mdata/raw/us/GPDIA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
 
 /* gen country variable */
 gen country = "USA"
@@ -113,7 +113,7 @@ save `usa_nomit'
 * Nominal capital consumption
 
 /* import raw data on nominal capital consumption */
-import excel "$mdata/us/A024RC1A027NBEA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+import excel "$mdata/raw/us/A024RC1A027NBEA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
 
 /* gen country variable */
 gen country = "USA"
@@ -155,6 +155,52 @@ gen p_t_manual = 100 * (nomy_t / y_t)
 
 /* construct difference between the ratio of nominal/real GDP and price deflator */
 gen p_t_diff = round(p_t_manual - p_t, .001)
+
+/* assert that differences should be 0 at 10^-3 */
+assert p_t_diff == 0
+drop p_t_diff p_t_manual
+
+/* save clean US data */
+save "$mdata/us_clean", replace
+
+*********
+* 2. UK *
+*********
+
+* Nominal and Real GDP
+
+/* import raw data */
+import excel "$mdata/raw/uk/quarterlynationalaccountsdatatables.xlsx", sheet("A2 AGGREGATES") cellrange(A9:I84) firstrow clear
+
+/* keep nominal and real GDP */
+keep Datasetidentifier YBHA ABMI
+
+/* rename and label variables */
+ren Datasetidentifier year
+ren YBHA nomy_t
+ren ABMI y_t
+label var y_t "Gross domestic product at current prices"
+label var nomy_t "Gross domestic product at market prices: Chained volume measure"
+
+gen country = "UK"
+
+tempfile uk_gdp
+save `uk_gdp'	
+
+* Price deflator 
+
+/* import raw data */
+import excel "/Users/sankalpsharma/Library/CloudStorage/GoogleDrive-ssharma9@usc.edu/My Drive/fall-2023/macro/macro-pset-4/growth-accounting/data/raw/uk/quarterlynationalaccountsdatatables.xlsx", sheet("A1 AGGREGATES") cellrange(A8:J83) firstrow clear
+keep Datasetidentifier YBGB
+ren Datasetidentifier year
+ren YBGB p_t
+
+merge 1:1 year using `uk_gdp'
+
+gen p_t_manual = 100 * (nomy_t / y_t)
+
+/* construct difference between the ratio of nominal/real GDP and price deflator */
+gen p_t_diff = round(p_t_manual - p_t, .1)
 
 /* assert that differences should be 0 at 10^-3 */
 assert p_t_diff == 0
