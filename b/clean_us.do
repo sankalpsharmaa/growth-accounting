@@ -154,6 +154,9 @@ foreach tempf in ngdp pt nomit dkt ht {
 keep if inrange(year, 1970, 2019)
 sort year 
 
+/* generate real investment */
+gen i_t = nomi_t * 100 / p_t
+
 /* gen observation identifier and order variables */
 gen id = _n
 order id country year y_t nomy_t y_t nomi_t dk_t h_t	

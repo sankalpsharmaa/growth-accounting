@@ -10,6 +10,7 @@
 \usepackage{amsthm}
 \usepackage{empheq}
 \usepackage{mdframed}
+\usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{lipsum}
 \usepackage{graphicx}
@@ -81,7 +82,26 @@
 \\
 a. \textbf{Construct a real investment series by calculating} $$I_t = \frac{NOMI_t}{P_t}$$
 
-where $NOMI_t$ is current price investment and $P_t$ is the GDP fixed price deflator. The latter is the ratio of current price to constant price GDP, $$ P_t = \frac{NOMI_t}{Y_t}$$
+where $NOMI_t$ is current price investment and $P_t$ is the GDP fixed price deflator. The latter is the ratio of current price to constant price GDP, $$ P_t = \frac{NOMY_t}{Y_t}$$
 
-\textbf{Answer:}
+\textbf{Answer:} I obtain US macroeconomic data from FRED. Specifically, the following variables are used:
+\begin{itemize}
+    \item $Y_t$: Real GDP, Billions of Chained 2017 Dollars
+    \item $NOMY_t$: Nominal GDP, Billions of Dollars
+    \item $NOMI_t$: Gross Private Domestic Investment, Billions of Dollars
+    \item $P_t$: GDP implicit price deflator, $Index_{2017} = 100$
+\end{itemize}
+
+For UK, I obtain data from the Office for National Statistics, the official statistical agency for the United Kingdom. Specifically, the following variables are used: 
+
+\begin{itemize}
+    \item $Y_t$: Gross domestic product at market prices: Chained volume measure
+    \item $NOMY_t$:  Gross domestic product at current prices
+    \item $NOMI_t$: Gross capital formation, Millions of Pounds
+    \item $I_t$: Gross capital formation, Millions of Chained 2019 Pounds
+    \item $P_t$: GDP implicit price deflator, $Index_{2017} = 100$
+    \item 
+\end{itemize}
+
+For UK, I do not construct $I_t$ by dividing $NOMI_t$ by $P_t$ since UK has a \href{https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybfu/ukea}{separate deflator} for gross capital formation. I instead use chained value of gross capital formation\footnote{I additionally validated the accuracy of the gross capital formation deflator - $\frac{NOMI_t}{I_t}$ was equal to the deflator value with an upto $10^{-2}$ digits}.
 \end{document}
