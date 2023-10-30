@@ -16,10 +16,6 @@ us_data = readtable(fullfile(mdata, 'us_clean.csv'));
 % open UK data
 uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 
-us_data.i_t = us_data.i_t ./ 1000
-us_data.y_t =  us_data.y_t ./ 1000
-us_data.dk_t = us_data.dk_t ./ 1000
-
 % construct investment-GDP ratio
 us_data.IY = us_data.i_t * 100 ./ us_data.y_t;
 uk_data.IY = uk_data.i_t * 100 ./ uk_data.y_t;
@@ -42,87 +38,55 @@ pos = get(savefig,'Position');
 set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 print(savefig, fullfile(out, 'Investment'),'-dpdf','-r0')
 
+% solve using arithmetic average
+geom = 0;
+
 % calculate capital-output ratio
 us_data.depdata = us_data.dk_t ./ us_data.y_t;
 
 % use arithmetic mean to calculate initial depreciation rate
-us_delta = geomean(us_data.depdata);
-
-% solve using arithmetic average (10 year mean)
-geom = 0;
+us_delta = mean(us_data.depdata);
+uk_delta = mean(uk_data.depdata);
 
 %Compute the function at the guess
-fun = @(x) InitK(x, us_delta, us_data.y_t(1:10),us_data.i_t(1:10), geom); 
+fun = @(x) InitK(x, delta, us_data.y_t(1:11),us_data.i_t(1:11), geom); 
 
 % specify an initial guess for K_t
 Kguess = 20;
 
 % calculate initial value of K_t
-InitK(Kguess, us_delta, us_data.y_t(1:10),us_data.i_t(1:10), geom)
+InitK(Kguess, delta, us_data.y_t(1:11),us_data.i_t(1:11), geom)
 
 % fsolve takes the function fun  and an initial guess as input and gives the solution.  
 [K0a10, fun] = fsolve(fun, Kguess);
 
-% solve using arithmetic average (5 year mean)
-geom = 0;
+%% Question 1-2: 3) Construct K_t and compare                        
 
-%Compute the function at the guess
-fun = @(x) InitK(x, us_delta, us_data.y_t(1:5),us_data.i_t(1:5), geom); 
+%Given our K0, we can simply compute the capital series and plot to compare
 
-% specify an initial guess for K_t
-Kguess = 100;
-
-% calculate initial value of K_t
-InitK(Kguess, us_delta, us_data.y_t(1:5),us_data.i_t(1:5), geom)
-
-% fsolve takes the function fun  and an initial guess as input and gives the solution.  
-[K0a5, fun] = fsolve(fun, Kguess);
-
-% solve using geometric average (10 year mean)
-
-%Compute the function at the guess
-fun = @(x) InitK(x, us_delta, us_data.y_t(1:10),us_data.i_t(1:10), 1); 
-
-% specify an initial guess for K_t
-Kguess = 20;
-
-% calculate initial value of K_t
-InitK(Kguess, us_delta, us_data.y_t(1:10),us_data.i_t(1:10), 1)
-
-% fsolve takes the function fun  and an initial guess as input and gives the solution.  
-[K0g10, fun] = fsolve(fun, Kguess);
-
-% Construct K_t and compare                        
-% Given K0, compute the capital series 
-
-% Compute Kt series
+%Compute Kt series
 t_us  = length(us_data.y_t);
+t_uk = length(uk_data.y_t);
 
-% make an array of zeros and merge with US data
 Ka10  = zeros(1,t_us);
-Ka5  = zeros(1,t_us);
-Kg10  = zeros(1,t_us);
 
 us_data.Ka10  = Ka10' ;
-us_data.Ka5  = Ka5' ;
-us_data.Kg10  = Kg10' ;
+uk_data.Ka10  = Ka10' ;
 
 % Compute initial Capital
-us_data.Ka10(1) = K0a10';
-us_data.Ka5(1) = K0a5';
-us_data.Kg10(1) = K0g10';
+us_data.Ka10(1)  = us_data.K0a10;
+uk_data.Ka10(1)  = uk_data.K0a10;
 
 % compute capital levels using the capital accumulation equation 
 
 % Compute the series
 for t=2:t_us
     
-    % Compute capital stock series for US
-    us_data.Ka10(t)  = (1 - us_delta) * us_data.Ka10(t-1) + us_data.i_t(t) ;
-    us_data.Ka5(t)  = (1 - us_delta) * us_data.Ka5(t-1) + us_data.i_t(t) ;
-    us_data.Kg10(t)  = (1 - us_delta) * us_data.Kg10(t-1) + us_data.i_t(t) ;
+    % Compute capital stock series for UK
+    us_data.Ka10(t)  = (1 - delta)*us.Ka10(t-1) + us.I(t) ;
 
 end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -149,7 +113,7 @@ function F = InitK(K0, delta, Y, I, geom)
     
     % Calculate the output based on geometric average
     if geom == 1
-        F = KY(1) - geomean(KY(2:end)) ;
+        F = KY(1) - geomean(KY(2:end));  
     else
 
         % otherwise Calculate the output based on arithmetic average
