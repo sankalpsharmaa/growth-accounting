@@ -1,4 +1,8 @@
 /.DS_Store
 data/.DS_Store
 data/raw/.DS_Store
-data
+tex/solution.aux
+tex/solution.fdb_latexmk
+tex/solution.fls
+tex/solution.log
+tex/solution.synctex.gz
