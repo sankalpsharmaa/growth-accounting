@@ -207,3 +207,4 @@ sum i_t_diff
 drop *_t_diff *_t_manual
 
 save "$mdata/uk_clean", replace
+export delimited "$mdata/uk_clean", replace

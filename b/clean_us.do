@@ -173,3 +173,4 @@ drop p_t_diff p_t_manual
 
 /* save clean US data */
 save "$mdata/us_clean", replace
+export delimited "$mdata/us_clean", replace
