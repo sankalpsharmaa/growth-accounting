@@ -6,3 +6,5 @@ tex/solution.fdb_latexmk
 tex/solution.fls
 tex/solution.log
 tex/solution.synctex.gz
+data/us_clean.dta
+data/uk_clean.dta
