@@ -155,5 +155,8 @@ sort year
 
 drop *_t_diff *_t_manual
 
+/* merge in penn data */
+merge 1:1 country year using "$mdata/penn_uk", nogen
+
 save "$mdata/uk_clean", replace
 export delimited "$mdata/uk_clean", replace
