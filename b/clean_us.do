@@ -174,6 +174,9 @@ drop p_t_diff p_t_manual
 /* merge in penn data */
 merge 1:1 country year using "$mdata/penn_us", nogen
 
+/* merge in UN pop data */
+merge 1:1 country year using "$mdata/un_pop_us", nogen
+
 /* save clean US data */
 save "$mdata/us_clean", replace
 export delimited "$mdata/us_clean", replace

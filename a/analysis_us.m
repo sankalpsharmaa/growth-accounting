@@ -19,6 +19,7 @@ uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 us_data.i_t = us_data.i_t ./ 1000
 us_data.y_t =  us_data.y_t ./ 1000
 us_data.dk_t = us_data.dk_t ./ 1000
+us_data.cn = us_data.cn ./ 1000000
 
 % construct investment-GDP ratio
 us_data.IY = us_data.i_t * 100 ./ us_data.y_t;
@@ -123,6 +124,109 @@ for t=2:t_us
     us_data.Kg10(t)  = (1 - us_delta) * us_data.Kg10(t-1) + us_data.i_t(t) ;
 
 end
+
+% make comparison table 
+Corrus = [corr(us_data.Ka10,us_data.Ka10) corr(us_data.Ka10,us_data.Kg10) corr(us_data.Ka10,us_data.Ka5)]';
+SDus   = [std(us_data.Ka10)/std(us_data.Ka10)  std(us_data.Kg10)/std(us_data.Ka10) std(us_data.Ka5)/std(us_data.Ka10)]';
+Gratesus = [us_data.Ka10 us_data.Kg10 us_data.Ka5];
+Gratesus = mean(log(Gratesus(2:end,:)) -log(Gratesus(1:end-1,:)));
+Gratesus = (Gratesus./Gratesus(1))';
+
+%Add rownames and colnames
+rowNames   = {'Correlation','Relative SD','Average Growth Rate'};
+colNames   = {'10yr avg','10 geom avrg', '5-year avrg'};
+Table1   = array2table([Corrus SDus Gratesus]','RowNames',rowNames,'VariableNames',colNames)
+
+%Now, lets plot!!
+ 
+savefig = figure;
+
+%Plot USA
+subplot(2,1,1);
+plot(us_data.year, us_data.Kg10);
+hold on
+plot(us_data.year, us_data.Ka10);
+hold on
+plot(us_data.year, us_data.Ka5);
+
+xlabel ( 'Years','Interpreter','latex' ) ;
+ylabel ( 'Trillions of \$USD','Interpreter','latex' ) ;
+title ( '$K_{t}$ In USA','Interpreter','latex' ) ;
+legend('10y Geom','10y Arithm','5y Arithm','Interpreter','latex','Location','Southeast')
+
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig, fullfile(out, 'Capital_Series_US'),'-dpdf','-r0')
+
+%Now, lets plot the PWT comp
+ 
+savefig = figure;
+
+%Plot USA
+subplot(2,1,1);
+plot(us_data.year, us_data.Kg10);
+hold on
+plot(us_data.year, us_data.Ka10);
+hold on
+plot(us_data.year, us_data.Ka5);
+hold on
+plot(us_data.year, us_data.cn);
+xlabel ( 'Years','Interpreter','latex' ) ;
+ylabel ( 'Trillions of \$USD','Interpreter','latex' ) ;
+title ( '$K_{t}$ In USA','Interpreter','latex' ) ;
+legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Southeast')
+
+%% Question 1-3: capital share of income
+% Recall that the capital share of income is defined by 
+% $\alpha_t = 1-\frac{CE_t}{Y_t-(HHGOS_t-HHCC_t) - (T_t-S_t)}$
+
+%Use the literature value instead
+alpha = 1/3
+
+%% Question 1-4: growth accounting 
+
+%First, lets compute labor series
+us_data.L   = us_data.h_t.*us_data.pop_t;
+us_data.YN  = us_data.y_t ./ us_data.pop_t;
+
+%Remember(Y_t/N_t) = A_t^(1/(1-alpha)) (K_t/Y_t)^(alpha/(1-alpha)) L_t/N_t
+%Compute TFP == A_t
+%I will use the capital from the arithmetic average using 10 obs
+us_data.A  = ( (us_data.y_t ./ us_data.pop_t) ./ ((us_data.Ka10 ./ us_data.y_t).^(alpha/(1-alpha)).* us_data.L ./ us_data.pop_t) ).^(1-alpha);
+ 
+%Now lets do the growth accounting (take growth rates)
+us_data.GAlev = [us_data.YN us_data.A.^(1/(1-alpha))  (us_data.Ka10 ./ us_data.y_t).^(alpha/(1-alpha))  us_data.L ./ us_data.pop_t]; 
+
+% we can change the 1 here to a different value ie 20 to change starting year
+us_data.GAlev  = us_data.GAlev(1:end,:);
+
+%Now take logs
+us_data.GAlog  = log(us_data.GAlev );
+
+% Calculate the growth rates
+GA  = (us_data.GAlog(2:end,:) -  us_data.GAlog(1:end-1,:))*100;
+
+%Now take historic averages
+GAh  = mean(GA);
+
+%Now print the GA
+savefig = figure;
+
+%Plot USA
+subplot(2,1,1);
+plot(us_data.year(2:end), GA);
+xlabel ( 'Years','Interpreter','latex' ) ;
+ylabel ( 'Growth Rate (\%)','Interpreter','latex' ) ;
+title ( 'Growth Accounting In USA','Interpreter','latex' ) ;
+legend('$\widehat{\frac{Y}{N}}$','$\frac{\widehat{A}}{1-\alpha}$','$\frac{\alpha}{1-\alpha}\widehat{\frac{K}{Y}}$','$\widehat{\frac{L}{N}}$','Interpreter','latex','Location','Southeast','Orientation','horizontal')
+
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig,fullfile(out, 'Growth_Accounting_us'),'-dpdf','-r0')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -40,6 +40,29 @@ ren YBGB p_t
 tempfile uk_p_t
 save `uk_p_t'
 
+****************
+* Hours worked *
+****************
+
+/* import raw data */
+import excel "/$mdata/raw/uk/series-311023.xls", sheet("data") cellrange(A9:B60) clear
+
+/* since 1970 data is unavailable, i just assume that the annual growth rate of hours worked is 2 percent and use that interpolated value for 1970, which is reasonable */
+expand 2 in 1
+sort A
+replace A = "1970" in 1
+replace B = B[2]*0.98 in 1
+
+ren A year
+ren B h_t
+
+gen country = "UK"
+
+destring year, replace
+
+tempfile uk_h_t
+save `uk_h_t'
+
 **************************************
 * Gross investment at current prices *
 **************************************
@@ -129,7 +152,7 @@ save `uk_dk_t'
 use `uk_gdp', clear
 
 /* now loop over all temporary datasets */
-foreach tempf in p_t nomit it dk_t {
+foreach tempf in p_t nomit it dk_t h_t {
 	merge 1:1 year using `uk_`tempf'', nogen
 	}
 
@@ -157,6 +180,9 @@ drop *_t_diff *_t_manual
 
 /* merge in penn data */
 merge 1:1 country year using "$mdata/penn_uk", nogen
+
+/* merge in UN population data */
+merge 1:1 country year using "$mdata/un_pop_uk", nogen
 
 save "$mdata/uk_clean", replace
 export delimited "$mdata/uk_clean", replace

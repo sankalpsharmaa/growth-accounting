@@ -103,5 +103,33 @@ For UK, I obtain data from the Office for National Statistics, the official stat
     \item 
 \end{itemize}
 
-For UK, I do not construct $I_t$ by dividing $NOMI_t$ by $P_t$ since UK has a \href{https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybfu/ukea}{separate deflator} for gross capital formation. I instead use chained value of gross capital formation\footnote{I additionally validated the accuracy of the gross capital formation deflator - $\frac{NOMI_t}{I_t}$ was equal to the deflator value with an upto $10^{-2}$ digits}.
+\noindent For UK, I do not construct $I_t$ by dividing $NOMI_t$ by $P_t$ since UK has a \href{https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybfu/ukea}{separate deflator} for gross capital formation. I instead use chained value of gross capital formation\footnote{I additionally validated the accuracy of the gross capital formation deflator - $\frac{NOMI_t}{I_t}$ was equal to the deflator value with an upto $10^{-2}$ digits}.
+\\ \\ 
+
+\noindent I now plot the real investment to real GDP ratio for both countries from 1970 to 2019.
+
+\begin{figure}[ht]
+    \includegraphics[width=0.7\textwidth]{out/Investment.pdf}
+    \centering
+\end{figure}
+
+The US investment to GDP ratio has fluctuated between $\sim 13.3\% $ and $20.5\%$ between 1970 and 2019 while the UK investment to GDP ratio has fluctuated between $15.8\%$ to $21.1\%$ in the same period. However, US investment to GDP ratio has shown more volality (as measured by long-run standard deviation) compared to UK.
+\\
+\\
+% QUESTION 1 ENDS HERE
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2. \textbf{Use the real investment series, the capital accumulation equation}
+$$
+K_{t+1}=(1-\delta) K_t+I_t
+$$
+
+and follow the numerical method we discussed in class to jointly determine the values of $\delta, K_0$, and $\left\{K_t\right\}_{t=1}^T$. Specifically, you will choose the initial capital stock to satisfy
+
+$$
+\frac{K_0}{Y_0}=\left(\frac{1}{10}\right)\left(\sum_{t=1}^{10}\left(K_t / Y_t\right)\right)
+$$
+
+given data on initial real GDP, and GDP for the following 10 periods. You will choose the depreciation rate such that sample average depreciation expenditure as a portion of GDP calculated in the data using each country's National Income and Product Accounts (NIPA) data equals that implied by the sample average product of your constructed (real) capital stock and depreciation rate as a ratio of (real) GDP. And use the capital accumulation equation to calculate the time-series of capital stocks over your sample period. You should not use independent sources of information on the depreciation rate, or initial capital stock in making these calculations.
 \end{document}
