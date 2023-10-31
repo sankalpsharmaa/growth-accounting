@@ -16,10 +16,10 @@ us_data = readtable(fullfile(mdata, 'us_clean.csv'));
 % open UK data
 uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 
-uk_data.i_t = uk_data.i_t ./ 10000;
-uk_data.y_t =  uk_data.y_t ./ 10000;
-uk_data.dk_t = uk_data.dk_t ./ 10000;
-uk_data.cn = uk_data.cn ./ 10000;
+uk_data.i_t = uk_data.i_t ./ 1000000;
+uk_data.y_t =  uk_data.y_t ./ 1000000;
+uk_data.dk_t = uk_data.dk_t ./ 100000;
+uk_data.cn = uk_data.cn ./ 10000000;
 
 % construct investment-GDP ratio
 us_data.IY = us_data.i_t * 100 ./ us_data.y_t;
@@ -175,7 +175,7 @@ hold on
 plot(uk_data.year, uk_data.cn);
 xlabel ( 'Years','Interpreter','latex' ) ;
 ylabel ( 'Trillions of \$USD','Interpreter','latex' ) ;
-title ( '$K_{t}$ In USA','Interpreter','latex' ) ;
+title ( '$K_{t}$ In UK','Interpreter','latex' ) ;
 legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Southeast')
 
 %% Question 1-3: capital share of income
