@@ -176,16 +176,22 @@ plot(us_data.year, us_data.cn);
 xlabel ( 'Years','Interpreter','latex' ) ;
 ylabel ( 'Trillions of \$USD','Interpreter','latex' ) ;
 title ( '$K_{t}$ In USA','Interpreter','latex' ) ;
-legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Southeast')
+legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Northwest')
 
-%% Question 1-3: capital share of income
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig, fullfile(out, 'Capital_Series_PWT_US'),'-dpdf','-r0')
+
+% Question 1-3: capital share of income
 % Recall that the capital share of income is defined by 
 % $\alpha_t = 1-\frac{CE_t}{Y_t-(HHGOS_t-HHCC_t) - (T_t-S_t)}$
 
 %Use the literature value instead
 alpha = 1/3
 
-%% Question 1-4: growth accounting 
+% Question 1-4: growth accounting 
 
 %First, lets compute labor series
 us_data.L   = us_data.h_t.*us_data.pop_t;

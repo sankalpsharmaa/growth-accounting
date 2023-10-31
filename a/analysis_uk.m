@@ -18,7 +18,7 @@ uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 
 uk_data.i_t = uk_data.i_t ./ 1000000;
 uk_data.y_t =  uk_data.y_t ./ 1000000;
-uk_data.dk_t = uk_data.dk_t ./ 100000;
+uk_data.dk_t = uk_data.dk_t ./ 1000000;
 uk_data.cn = uk_data.cn ./ 10000000;
 
 % construct investment-GDP ratio
@@ -176,16 +176,22 @@ plot(uk_data.year, uk_data.cn);
 xlabel ( 'Years','Interpreter','latex' ) ;
 ylabel ( 'Trillions of \$USD','Interpreter','latex' ) ;
 title ( '$K_{t}$ In UK','Interpreter','latex' ) ;
-legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Southeast')
+legend('10y Geom','10y Arithm','5y Arithm','PWT','Interpreter','latex','Location','Northwest')
 
-%% Question 1-3: capital share of income
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig, fullfile(out, 'Capital_Series_PWT_UK'),'-dpdf','-r0')
+
+% Question 1-3: capital share of income
 % Recall that the capital share of income is defined by 
 % $\alpha_t = 1-\frac{CE_t}{Y_t-(HHGOS_t-HHCC_t) - (T_t-S_t)}$
 
 %Use the literature value instead
 alpha = 1/3
 
-%% Question 1-4: growth accounting 
+% Question 1-4: growth accounting 
 
 %First, lets compute labor series
 uk_data.L   = uk_data.h_t.*uk_data.pop_t;
