@@ -138,6 +138,53 @@ drop observation_date
 tempfile usa_dkt
 save `usa_dkt'	
 
+**************************************
+* Nominal Net Operating Surplus data *
+**************************************
+
+import excel "$mdata/raw/us/GDINOSA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+generate country = "USA"
+generate year = year(observation_date)
+
+rename GDINOSA NNOS_t
+label var NNOS_t "Net Operating Surplus, Billions of Dollars"
+
+keep country year NNOS_t 
+
+tempfile usa_nnos
+save `usa_nnos'
+
+**********************************************
+* Nominal Taxes on Production & Imports data *
+**********************************************
+
+import excel "$mdata/raw/us/GDITAXESA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+generate country = "USA"
+generate year = year(observation_date)
+rename GDITAXESA NTAX_t
+label var NTAX_t "Taxes on Production and Imports, Billions of Dollars"
+
+keep country year NTAX_t 
+
+tempfile usa_ntax
+save `usa_ntax'
+
+**************************
+* Nominal Subsidies data *
+**************************
+
+import excel "$mdata/raw/us/GDISUBSA.xls", sheet("FRED Graph") cellrange(A11:B105) firstrow clear
+generate country = "USA"
+generate year = year(observation_date)
+
+rename GDISUBSA NSUB_t
+label var NSUB_t "Subsidies, Billions of Dollars"
+
+keep country year NSUB_t  
+
+tempfile usa_nsub
+save `usa_nsub'
+
 *******************
 * Merge variables *
 *******************
@@ -146,7 +193,7 @@ save `usa_dkt'
 use `usa_rgdp', clear
 
 /* now loop over all temporary datasets */
-foreach tempf in ngdp pt nomit dkt ht {
+foreach tempf in ngdp pt nomit dkt ht nnos ntax nsub {
 	merge 1:1 country year using `usa_`tempf'', nogen
 	}
 	
@@ -176,6 +223,8 @@ merge 1:1 country year using "$mdata/penn_us", nogen
 
 /* merge in UN pop data */
 merge 1:1 country year using "$mdata/un_pop_us", nogen
+
+ren *, lower
 
 /* save clean US data */
 save "$mdata/us_clean", replace

@@ -19,7 +19,7 @@ uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 uk_data.i_t = uk_data.i_t ./ 1000000;
 uk_data.y_t =  uk_data.y_t ./ 1000000;
 uk_data.dk_t = uk_data.dk_t ./ 1000000;
-uk_data.cn = uk_data.cn ./ 10000000;
+uk_data.cn = uk_data.cn ./ 1000000;
 
 % construct investment-GDP ratio
 us_data.IY = us_data.i_t * 100 ./ us_data.y_t;
@@ -99,7 +99,7 @@ InitK(Kguess, uk_delta, uk_data.y_t(1:10),uk_data.i_t(1:10), 1)
 % Compute Kt series
 t_us  = length(uk_data.y_t);
 
-% make an array of zeros and merge with US data
+% make an array of zeros and merge with UK data
 Ka10  = zeros(1,t_us);
 Ka5  = zeros(1,t_us);
 Kg10  = zeros(1,t_us);
@@ -158,7 +158,7 @@ legend('10y Geom','10y Arithm','5y Arithm','Interpreter','latex','Location','Sou
 set(savefig,'Units','Inches');
 pos = get(savefig,'Position');
 set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(savefig, fullfile(out, 'Capital_Series_uk'),'-dpdf','-r0')
+print(savefig, fullfile(out, 'Capital_Series_uk'),'-dpdf')
 
 %Now, lets plot the PWT comp
  
@@ -217,6 +217,9 @@ GA  = (uk_data.GAlog(2:end,:) -  uk_data.GAlog(1:end-1,:))*100;
 %Now take historic averages
 GAh  = mean(GA);
 
+colNames   = {'Y/N','A', 'K/Y', 'L/N'};
+table = array2table(GAh, "VariableNames",colNames)
+
 %Now print the GA
 savefig = figure;
 
@@ -232,8 +235,66 @@ legend('$\widehat{\frac{Y}{N}}$','$\frac{\widehat{A}}{1-\alpha}$','$\frac{\alpha
 set(savefig,'Units','Inches');
 pos = get(savefig,'Position');
 set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
-print(savefig,fullfile(out, 'Growth_Accounting_us'),'-dpdf','-r0')
+print(savefig,fullfile(out, 'Growth_Accounting_uk'),'-dpdf','-r0')
 
+% now split the sample to two periods - 1970 to 1994 and 1995 to 2019
+
+period_1 = uk_data(1:25, 1:size(uk_data, 2));
+period_2 = uk_data(26:50, 1:size(uk_data, 2));
+
+% Calculate TFP for each period
+period_1_A = ( (period_1.y_t ./ period_1.pop_t) ./ ((period_1.Ka10 ./ period_1.y_t).^(alpha/(1-alpha)).* period_1.L ./ period_1.pop_t) ).^(1-alpha);
+period_2_A = ( (period_2.y_t ./ period_2.pop_t) ./ ((period_2.Ka10 ./ period_2.y_t).^(alpha/(1-alpha)).* period_2.L ./ period_2.pop_t) ).^(1-alpha);
+
+% Calculate growth accounting for each period
+GAlev1 = [period_1.YN period_1_A.^(1/(1-alpha)) (period_1.Ka10 ./ period_1.y_t).^(alpha/(1-alpha)) period_1.L ./ period_1.pop_t];
+GAlev2 = [period_2.YN period_2_A.^(1/(1-alpha)) (period_2.Ka10 ./ period_2.y_t).^(alpha/(1-alpha)) period_2.L ./ period_2.pop_t];
+
+% Take logs for each period
+GAlog1 = log(GAlev1);
+GAlog2 = log(GAlev2);
+
+% Calculate growth rates for each period
+GA1 = (GAlog1(2:end, :) - GAlog1(1:end-1, :)) * 100;
+GA2 = (GAlog2(2:end, :) - GAlog2(1:end-1, :)) * 100;
+
+% Calculate historic averages for each period
+GAh1 = mean(GA1);
+GAh2 = mean(GA2);
+
+% now make table to show average annual growth rates for each growth
+% component
+colNames   = {'Y/N','A', 'K/Y', 'L/N'};
+table = array2table(GAh1, "VariableNames",colNames)
+table = array2table(GAh2, "VariableNames",colNames)
+
+%d) Plotting again with 100 base year
+% Calculate the cumulative product of growth rates
+cumulativeGrowthUK = cumprod(1 + GA/100);
+
+% Set the initial value
+initialValue = 100;
+
+% a new column based on the initial value and cumulative growth
+normalizeUK = initialValue * cumulativeGrowthUK;
+
+savefig = figure 
+
+%Plot UK
+subplot(2,1,1);
+plot(uk_data.year(2:end), normalizeUK);
+xlabel ( 'Years','Interpreter','latex' ) ;
+ylabel ( 'Growth Rate (\%)','Interpreter','latex' ) ;
+title ( 'Growth Accounting In UK','Interpreter','latex' ) ;
+legend('$\widehat{\frac{Y}{N}}$','$\frac{\widehat{A}}{1-\alpha}$','$\frac{\alpha}{1-\alpha}\widehat{\frac{K}{Y}}$','$\widehat{\frac{L}{N}}$','Interpreter','latex','Location','Northwest','Orientation','horizontal')
+
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig,fullfile(out, 'Growth_Accounting_uk_normalized'),'-dpdf')
+
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % CALCULATE INITIAL K0 %

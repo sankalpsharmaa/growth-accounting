@@ -217,8 +217,16 @@ GA  = (us_data.GAlog(2:end,:) -  us_data.GAlog(1:end-1,:))*100;
 %Now take historic averages
 GAh  = mean(GA);
 
+colNames   = {'Y/N','A', 'K/Y', 'L/N'};
+table = array2table(GAh, "VariableNames",colNames)
+
 %Now print the GA
 savefig = figure;
+
+% now make table to show average annual growth rates for each growth
+% component
+colNames   = {'Y/N','A', 'K/Y', 'L/N'};
+table = array2table(GAh, "VariableNames",colNames)
 
 %Plot USA
 subplot(2,1,1);
@@ -233,6 +241,63 @@ set(savefig,'Units','Inches');
 pos = get(savefig,'Position');
 set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 print(savefig,fullfile(out, 'Growth_Accounting_us'),'-dpdf','-r0')
+
+% now split the sample to two periods - 1970 to 1994 and 1995 to 2019
+
+period_1 = us_data(1:25, 1:size(us_data, 2));
+period_2 = us_data(26:50, 1:size(us_data, 2));
+
+% Calculate TFP for each period
+period_1_A = ( (period_1.y_t ./ period_1.pop_t) ./ ((period_1.Ka10 ./ period_1.y_t).^(alpha/(1-alpha)).* period_1.L ./ period_1.pop_t) ).^(1-alpha);
+period_2_A = ( (period_2.y_t ./ period_2.pop_t) ./ ((period_2.Ka10 ./ period_2.y_t).^(alpha/(1-alpha)).* period_2.L ./ period_2.pop_t) ).^(1-alpha);
+
+% Calculate growth accounting for each period
+GAlev1 = [period_1.YN period_1_A.^(1/(1-alpha)) (period_1.Ka10 ./ period_1.y_t).^(alpha/(1-alpha)) period_1.L ./ period_1.pop_t];
+GAlev2 = [period_2.YN period_2_A.^(1/(1-alpha)) (period_2.Ka10 ./ period_2.y_t).^(alpha/(1-alpha)) period_2.L ./ period_2.pop_t];
+
+% Take logs for each period
+GAlog1 = log(GAlev1);
+GAlog2 = log(GAlev2);
+
+% Calculate growth rates for each period
+GA1 = (GAlog1(2:end, :) - GAlog1(1:end-1, :)) * 100;
+GA2 = (GAlog2(2:end, :) - GAlog2(1:end-1, :)) * 100;
+
+% Calculate historic averages for each period
+GAh1 = mean(GA1);
+GAh2 = mean(GA2);
+
+% now make table to show average annual growth rates for each growth
+% component
+colNames   = {'Y/N','A', 'K/Y', 'L/N'};
+table = array2table(GAh1, "VariableNames",colNames)
+table = array2table(GAh2, "VariableNames",colNames)
+
+%d) Plotting again with 100 base year
+% Calculate the cumulative product of growth rates
+cumulativeGrowthUS = cumprod(1 + GA/100);
+
+% Set the initial value
+initialValue = 100;
+
+% a new column based on the initial value and cumulative growth
+normalizeUS = initialValue * cumulativeGrowthUS;
+
+savefig = figure 
+
+%Plot UK
+subplot(2,1,1);
+plot(us_data.year(2:end), normalizeUS);
+xlabel ( 'Years','Interpreter','latex' ) ;
+ylabel ( 'Growth Rate (\%)','Interpreter','latex' ) ;
+title ( 'Growth Accounting In US','Interpreter','latex' ) ;
+legend('$\widehat{\frac{Y}{N}}$','$\frac{\widehat{A}}{1-\alpha}$','$\frac{\alpha}{1-\alpha}\widehat{\frac{K}{Y}}$','$\widehat{\frac{L}{N}}$','Interpreter','latex','Location','Northwest','Orientation','horizontal')
+
+%Save Output to pdf
+set(savefig,'Units','Inches');
+pos = get(savefig,'Position');
+set(savefig,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+print(savefig,fullfile(out, 'Growth_Accounting_us_normalized'),'-dpdf')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

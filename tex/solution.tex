@@ -179,7 +179,7 @@ By the AM-GM inequality, we know that the geometric mean would be lesser than th
 
 Additionally, we are required to calculate the correlation between the 10-year arithmetic and geometric mean as well as the relative standard deviation and growth rates. 
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{Comparison of Capital series for US}
     \label{tab:US_K}
@@ -227,7 +227,7 @@ I show the show the statistical properties of the 5-year arithmetic average capi
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{Comparison of Capital series for the US with 5-year arithmetic average}
     \label{tab:US_K_2}
@@ -240,7 +240,7 @@ I show the show the statistical properties of the 5-year arithmetic average capi
     \end{tabular}
     \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{Comparison of Capital series for UK with 5-year arithmetic average}
     \label{tab:UK_K_2}
@@ -259,13 +259,109 @@ Similar to part 3, we see that the correlation between the 10-year and 5-year ar
 \\ \\ 
 \textbf{Answer}: I use data from the Penn World Tables (v10.01), running from 1950 to 2019. I now plot comparison of the capital stock series for each country against their corresponding PWT capital stock series.
 
-\begin{figure}
+\begin{figure}[htbp]
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Capital_Series_PWT_US.pdf}
+    \caption{Capital series for US}
+\end{figure}
+
+\begin{figure}[htbp]
     \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Capital_Series_PWT_UK.pdf}
     \caption{Capital series for UK}
 \end{figure}
 
-\begin{figure}[]
-    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Capital_Series_PWT_UK.pdf}
-    \caption{Capital series for UK}
+A plausible reason for the differences between the Penn series and the series I construct can be explained by the fact that I do not use the the PPP rate for the UK and US, which may have biased the estimation, hence the improper shape. 
+\\ \\ 
+6. \textbf{Assume a Cobb-Douglas form for the aggregate production function in each of the countries, with TFP. Calibrate the value of capital’s share of income for the two countries using NIPA data as we discussed in class}. This is always possible for the United States. It may be more challenging for the United Kingdom, and you should document thoroughly the efforts you made to attain the appropriate data, the data series on income sources that are available, and the data series not available. If all else fails, set the capital income share for the United Kingdom equal to that for the United States but first show all the data you collected and explain carefully why that data yields a poor estimate of capital’s income share.
+\\ \\ 
+\textbf{Answer:} \textit{INCOMPLETE! add more stuff here}
+\\ \\ 
+7. \textbf{Conduct a growth accounting exercise for each country individually, by decomposing movements in real GDP per working age person at each date into components attributable to growth in a technology factor, growth in a capital factor, and growth in a labor factor using (ideally) aggregate hours worked to measure labor input, using the (growth rate version of the) following equation}
+$$
+\left(\frac{Y_t}{P O P_t}\right)=A_t^{1 /(1-\alpha)}\left(\frac{K_t}{Y_t}\right)^{\alpha /(1-\alpha)} \frac{N_t}{P O P_t}
+$$
+
+\noindent To do this, you must impute the growth rate of the TFP factor using the production function.
+\\ \\ 
+a) \textbf{According to equation (1), what is the balanced growth path growth rate of output per working age person?} Use the notes from class to re-express this growth rate as a common global long-run growth rate. Based on US data, what is the value of this long-run growth rate over the sample period?
+\\ \\ 
+\textbf{Answer:} Solving for $A_t$ gives $A_t=\left(\frac{\frac{Y_t}{N_t}}{\left(\frac{K_t}{Y_t}\right)^{1-\alpha} \frac{L_t}{N_t}}\right)^{1-\alpha}$. I then take natural logarithms and compute their difference (denoted by hats) to get
+$$
+\frac{\widehat{Y_t}}{N_t}=\frac{1}{1-\alpha} \widehat{A_t}+\frac{\alpha}{1-\alpha} \frac{\widehat{K_t}}{Y_t}+\frac{\widehat{L_t}}{N_t}
+$$
+The balanced growth path growth rate for output-per-working age person is 2.1\%. I show the complete decomposition for long-run growth rates in 7(b).
+\\ \\ 
+b) \textbf{Calculate sample average annual growth rates for each growth accounting variable in equation (1) for each country}. Discuss the implied sources of GDP per working age person (people ages 16-65 or 20-69 or whatever you study define as the working age population) growth over the sample period for all three countries.
+\\ \\ 
+I decompose the long-run growth rate following the formula provided, which produces the average results presented below:
+
+\begin{table}[htbp]
+    \centering
+    \caption{Growth Accounting, 1980-2019 (\%)}
+    \label{tab:growth-accounting}
+    \begin{tabular}{lcccc}
+    \hline
+    Country & $\widehat{\frac{Y}{N}}$ & $\frac{1}{1-\alpha} \widehat{A}$ & $\frac{\alpha}{1-\alpha} \frac{\widehat{K}}{Y}$ & $\frac{\widehat{L}}{N}$ \\ \hline
+    United Kingdom & 1.7138 & 1.3253  & -0.058219 & 0.44676 \\
+    United States & 1.4881  & 0.19961 & 0.055302 & 1.2332 \\ \hline
+    \end{tabular}
+    \end{table}
+
+Where the values are in percentage units (\%). For both countries, we get the usual result on the literature: A major TFP component, followed by a considerable capital output ratio effect and finally a modest contribution of the population increment. 
+\\ \\ 
+To check whether there is balanced growth, it suffices to plot the decomposition for both countries, which is shown below.
+
+\begin{figure}[htbp]
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_us.pdf}
+    \caption{Growth accounting for US}
 \end{figure}
+
+\begin{figure}[htbp]
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_uk.pdf}
+    \caption{Growth accounting for UK}
+\end{figure}
+
+Under balanced growth, each component should be a straight horizontal line. Looking at the variability of of the growth rates in both countries, the hypothesis of balanced growth would
+be more likely to hold in the USA than in UK.
+\\ \\ 
+The following potential sources can explain growth in $\widehat{\frac{Y}{N}}$ in the US and UK over the last 50 years:
+
+\begin{itemize}
+\item \textbf{Capital deepening}: Increased capital investment per worker, through more equipment, machinery, technology etc. This makes workers more productive.
+\item \textbf{Technological progress}: New innovations, discoveries and technologies that allow workers to produce more output for the same amount of input. Examples include IT and computers, automation, and new production techniques.
+\item \textbf{Education/skills}: An increase in the education and skill level of the workforce over time.
+\item \textbf{Managerial/organizational innovations}: Better management practices, corporate restructurings, just-in-time inventory systems, supply chain management etc. can improve efficiency of workers, making them more productive.
+\end{itemize}
+
+\noindent c) \textbf{If you divide your sample period into two or three equally long sub-periods and calculate average growth rates over these sub-periods, do the same results hold?}
+\\ \\ 
+I split the sample into 2 periods: 1970-1994 and 1995-2019. The growth decomposition is provided separately for each periods in the subsequent tables.
+
+% \usepackage{booktabs}
+\begin{table}[htbp]
+    \centering
+    \caption{Growth Accounting by period, 1980-2019 (\%)}
+    \label{tab:growth-accounting_period}
+    \begin{tabular}{@{}cccccc@{}}
+    \toprule
+    Period & Country & $\widehat{\frac{Y}{N}}$ & $\frac{1}{1-\alpha} \widehat{A}$ & $\frac{\alpha}{1-\alpha} \frac{\widehat{K}}{Y}$ & $\frac{\widehat{L}}{N}$ \\ \midrule
+    1970-1994 & United Kingdom &  1.8647 & 1.8755  & -0.0041 & -0.0066  \\
+    1995-2019 &  & 1.5459 & 0.7764 & -0.09341 & 0.8629 \\
+    \\
+    1970-1994 & United States & 1.469 & -0.0199 & -0.01564 & 1.5046 \\
+    1995-2019 &  & 1.5056 & 0.47759 & 0.12465 & 0.90337  \\ \bottomrule
+    \end{tabular}
+    \end{table}
+
+d) \textbf{Plot GDP per working age person against each of the growth factors on the right-hand side of equation (1) in a single figure for each country, normalizing all variables to equal 100 in the initial sample year}. Based on these results, would you say that any of the three countries was likely on, or near, a balanced growth path during the sample period? Explain your answer.
+
+\begin{figure}[htbp]
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_us_normalized.pdf}
+    \caption{Normalized growth decomposition for US}
+\end{figure}
+
+\begin{figure}[htbp]
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_uk_normalized.pdf}
+    \caption{Normalized growth decomposition for UK}
+\end{figure}
+
 \end{document}
