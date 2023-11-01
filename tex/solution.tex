@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Define Article %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\documentclass[11pt]{article}
+\documentclass[12pt]{article}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Using Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -82,7 +82,7 @@
 \\
 a. \textbf{Construct a real investment series by calculating} $$I_t = \frac{NOMI_t}{P_t}$$
 
-where $NOMI_t$ is current price investment and $P_t$ is the GDP fixed price deflator. The latter is the ratio of current price to constant price GDP, $$ P_t = \frac{NOMY_t}{Y_t}$$
+where $NOMI_t$ is the current price investment and $P_t$ is the GDP fixed price deflator. The latter is the ratio of current price to constant price GDP, $$ P_t = \frac{NOMY_t}{Y_t}$$
 
 \textbf{Answer:} I obtain US macroeconomic data from FRED. Specifically, the following variables are used:
 \begin{itemize}
@@ -92,7 +92,7 @@ where $NOMI_t$ is current price investment and $P_t$ is the GDP fixed price defl
     \item $P_t$: GDP implicit price deflator, $Index_{2017} = 100$
 \end{itemize}
 
-For UK, I obtain data from the Office for National Statistics, the official statistical agency for the United Kingdom. Specifically, the following variables are used: 
+For the UK, I obtained data from the Office for National Statistics, the official statistical agency for the United Kingdom. Specifically, the following variables are used: 
 
 \begin{itemize}
     \item $Y_t$: Gross domestic product at market prices: Chained volume measure
@@ -100,23 +100,20 @@ For UK, I obtain data from the Office for National Statistics, the official stat
     \item $NOMI_t$: Gross capital formation, Millions of Pounds
     \item $I_t$: Gross capital formation, Millions of Chained 2019 Pounds
     \item $P_t$: GDP implicit price deflator, $Index_{2017} = 100$
-    \item 
 \end{itemize}
 
 \noindent For UK, I do not construct $I_t$ by dividing $NOMI_t$ by $P_t$ since UK has a \href{https://www.ons.gov.uk/economy/grossdomesticproductgdp/timeseries/ybfu/ukea}{separate deflator} for gross capital formation. I instead use chained value of gross capital formation\footnote{I additionally validated the accuracy of the gross capital formation deflator - $\frac{NOMI_t}{I_t}$ was equal to the deflator value with an upto $10^{-2}$ digits}.
 \\ \\ 
+\noindent I now plot the real investment to real GDP ratio for both countries from 1970 to 2019 in Figure \ref{fig:inv-gdp}. 
+\\ \\ 
+The US investment to GDP ratio has fluctuated between $\sim 13.3\% $ and $20.5\%$ between 1970 and 2019 while the UK investment to GDP ratio has fluctuated between $15.8\%$ to $21.1\%$ in the same period. However, US investment to GDP ratio has shown more volatility (as measured by long-run standard deviation) compared to UK.
 
-\noindent I now plot the real investment to real GDP ratio for both countries from 1970 to 2019.
-
-\begin{figure}[ht]
-    \includegraphics[width=0.7\textwidth]{out/Investment.pdf}
+\begin{figure}[h]
+    \includegraphics[width=0.8\textwidth]{out/Investment.pdf}
     \centering
     \caption{Investment-GDP ratio comparison}
+    \label{fig:inv-gdp}
 \end{figure}
-
-The US investment to GDP ratio has fluctuated between $\sim 13.3\% $ and $20.5\%$ between 1970 and 2019 while the UK investment to GDP ratio has fluctuated between $15.8\%$ to $21.1\%$ in the same period. However, US investment to GDP ratio has shown more volality (as measured by long-run standard deviation) compared to UK.
-\\
-\\
 % QUESTION 1 ENDS HERE
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,12 +129,12 @@ $$
 \frac{K_0}{Y_0}=\left(\frac{1}{10}\right)\left(\sum_{t=1}^{10}\left(K_t / Y_t\right)\right)
 $$
 
-\noindent given data on initial real GDP, and GDP for the following 10 periods. You will choose the depreciation rate such that sample average depreciation expenditure as a portion of GDP calculated in the data using each country's National Income and Product Accounts (NIPA) data equals that implied by the sample average product of your constructed (real) capital stock and depreciation rate as a ratio of (real) GDP. And use the capital accumulation equation to calculate the time-series of capital stocks over your sample period. You should not use independent sources of information on the depreciation rate, or initial capital stock in making these calculations.
+\noindent given data on initial real GDP, and GDP for the following 10 periods. You will choose the depreciation rate such that the sample average depreciation expenditure as a portion of GDP calculated in the data using each country's National Income and Product Accounts (NIPA) data equals that implied by the sample average product of your constructed (real) capital stock and depreciation rate as a ratio of (real) GDP. And use the capital accumulation equation to calculate the time series of capital stocks over your sample period. You should not use independent sources of information on the depreciation rate, or initial capital stock in making these calculations.
 \\ \\ 
 \textbf{Answer}: I use numerical optimization on MATLAB (\textit{fsolve}) to jointly determine the values of $\delta, K_0$, and $\left\{K_t\right\}_{t=1}^T$ between 1970 and 2019. 
+\\ \\ 
+The UK has a higher rate of depreciation than the US. However, the capital stock in the US is higher than in the UK by a magnitude of 10, indicating significant differences in the level of capital stock formation.
 
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
 \begin{table}[h]
     \centering
     \caption{$K_0$ value }
@@ -146,13 +143,11 @@ $$
     \toprule
     Country & Arithmetic mean (n=10) & $\delta$ \\ \midrule
     United States & 9.7794 & 0.0682 \\
-    United Kingdom & 0.1482 & 0.1056
+    United Kingdom & 1.482 & 0.1056
     \end{tabular}
     \end{table}
 
-UK has a higher rate of depreciation than US.
-\\ \\ 
-3. \textbf{Repeat part 2. using a geometric ten-year average of capital-output ratios in the initial capital stock formula}, rather than a simple arithmetic average, and compare the two capital stock series you have constructed for each country by plotting them and calculating
+3. \textbf{Repeat part 2 using a geometric ten-year average of capital-output ratios in the initial capital stock formula}, rather than a simple arithmetic average, and compare the two capital stock series you have constructed for each country by plotting them and calculating
 \begin{itemize}
     \item their simple correlation,
     \item their relative standard deviations,
@@ -163,9 +158,7 @@ Discuss how and why they differ.
 \\ \\
 By the AM-GM inequality, we know that the geometric mean would be lesser than the arithmetic mean.
 
-% Please add the following required packages to your document preamble:
-% \usepackage{booktabs}
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{$K_0$ value }
     \label{tab:table-1}
@@ -192,9 +185,9 @@ Additionally, we are required to calculate the correlation between the 10-year a
     \end{tabular}
     \end{table}
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
-    \caption{Comparison of Capital series for UK}
+    \caption{Comparison of Capital series for the UK}
     \label{tab:UK_K}
     \begin{tabular}{@{}lll@{}}
     \toprule
@@ -214,16 +207,16 @@ I now plot the capital series for each country.
 
 \begin{figure}[h]
     \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Capital_Series_uk.pdf}
-    \caption{Capital series for UK}
+    \caption{Capital series for the UK}
 \end{figure}
 
 Note that the differences in the capital stock series constructed using the capital accumulation equation have very minimal differences which suggests that the estimates are robust to the method employed. 
 \\ \\
-4. \textbf{Repeat part 2 using the five-year arithmetic mean of capital-output ratios after the initial period rather than 10-year arithmetic mean to calculate the initial capital stock}. Does this matter, quantitatively, for the capital stock series you compute for each country? Again, plot the two series and compare their statistical properties (first and second moments).
+4. \textbf{Repeat part 2 using the five-year arithmetic mean of capital-output ratios after the initial period rather than the 10-year arithmetic mean to calculate the initial capital stock}. Does this matter, quantitatively, for the capital stock series you compute for each country? Again, plot the two series and compare their statistical properties (first and second moments).
 \\ \\ 
 \textbf{Answer:} I repeat the same exercise for both countries using 5-year and 10-year averages. The plots above also show the 5-year series, which is nearly identical to the 10-year arithmetic mean and 10-year geometric mean capital stock series. 
 \\ \\ 
-I show the show the statistical properties of the 5-year arithmetic average capital stock series.
+I show the statistical properties of the 5-year arithmetic average capital stock series.
 
 % Please add the following required packages to your document preamble:
 % \usepackage{booktabs}
@@ -242,7 +235,7 @@ I show the show the statistical properties of the 5-year arithmetic average capi
 
 \begin{table}[htbp]
     \centering
-    \caption{Comparison of Capital series for UK with 5-year arithmetic average}
+    \caption{Comparison of Capital series for the UK with 5-year arithmetic average}
     \label{tab:UK_K_2}
     \begin{tabular}{@{}llll@{}}
     \toprule
@@ -253,11 +246,11 @@ I show the show the statistical properties of the 5-year arithmetic average capi
     \end{tabular}
     \end{table}
 
-Similar to part 3, we see that the correlation between the 10-year and 5-year arithmetic average is near-perfect, indicating the robustness of the capital stock estimates.
+Similar to part 3, we see that the correlation between the 10-year and 5-year arithmetic averages is near-perfect, indicating the robustness of the capital stock estimates.
 \\ \\ 
-5. \textbf{If there are capital stock series available online for your three countries, for example the PPP series in the Penn World Tables or the nominal series in the IMF’s capital and investment dataset, compare your constructed series for each country to the published series and try to uncover any reasons for the differences}. Again, plot the series against one another and compare their first and second moments.
+5. \textbf{If there are capital stock series available online for your three countries, for example, the PPP series in the Penn World Tables or the nominal series in the IMF’s capital and investment dataset, compare your constructed series for each country to the published series and try to uncover any reasons for the differences}. Again, plot the series against one another and compare their first and second moments.
 \\ \\ 
-\textbf{Answer}: I use data from the Penn World Tables (v10.01), running from 1950 to 2019. I now plot comparison of the capital stock series for each country against their corresponding PWT capital stock series.
+\textbf{Answer}: I use data from the Penn World Tables (v10.01), running from 1950 to 2019. I now plot a comparison of the capital stock series for each country against their corresponding PWT capital stock series.
 
 \begin{figure}[htbp]
     \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Capital_Series_PWT_US.pdf}
@@ -269,20 +262,24 @@ Similar to part 3, we see that the correlation between the 10-year and 5-year ar
     \caption{Capital series for UK}
 \end{figure}
 
-A plausible reason for the differences between the Penn series and the series I construct can be explained by the fact that I do not use the the PPP rate for the UK and US, which may have biased the estimation, hence the improper shape. 
+A plausible reason for the differences between the Penn series and the series I construct can be explained by the fact that I do not use the PPP rate for the UK and US, which may have biased the estimation, hence the improper shape. 
 \\ \\ 
-6. \textbf{Assume a Cobb-Douglas form for the aggregate production function in each of the countries, with TFP. Calibrate the value of capital’s share of income for the two countries using NIPA data as we discussed in class}. This is always possible for the United States. It may be more challenging for the United Kingdom, and you should document thoroughly the efforts you made to attain the appropriate data, the data series on income sources that are available, and the data series not available. If all else fails, set the capital income share for the United Kingdom equal to that for the United States but first show all the data you collected and explain carefully why that data yields a poor estimate of capital’s income share.
+6. \textbf{Assume a Cobb-Douglas form for the aggregate production function in each of the countries, with TFP. Calibrate the value of capital’s share of income for the two countries using NIPA data as we discussed in class}. This is always possible in the United States. It may be more challenging for the United Kingdom, and you should document thoroughly the efforts you made to attain the appropriate data, the data series on income sources that are available, and the data series not available. If all else fails, set the capital income share for the United Kingdom equal to that for the United States but first show all the data you collected and explain carefully why that data yields a poor estimate of capital’s income share.
 \\ \\ 
-\textbf{Answer:} \textit{INCOMPLETE! add more stuff here}
+\textbf{Answer:} I use the available data to compute $\alpha_{USA} = 0.244324$, as the average of $\frac{CE_t}{Y_t-NOS_t-(T_t - S_t)}$ between 1970 and 2019, which is reasonable. 
 \\ \\ 
-7. \textbf{Conduct a growth accounting exercise for each country individually, by decomposing movements in real GDP per working age person at each date into components attributable to growth in a technology factor, growth in a capital factor, and growth in a labor factor using (ideally) aggregate hours worked to measure labor input, using the (growth rate version of the) following equation}
+For the UK, I could not find reliable estimates for net operating surplus so I could not estimate $\alpha$ for the UK. I set $\alpha_{UK}$ the same as that of the USA.
+\\ \\ 
+However, I use $\alpha = \frac{1}{3}$ for the remainder of the exercise since it is the value found in the literature.
+\\ \\ 
+7. \textbf{Conduct a growth accounting exercise for each country individually, by decomposing movements in real GDP per working-age person at each date into components attributable to growth in a technology factor, growth in a capital factor, and growth in a labor factor using (ideally) aggregate hours worked to measure labor input, using the (growth rate version of the) following equation}
 $$
 \left(\frac{Y_t}{P O P_t}\right)=A_t^{1 /(1-\alpha)}\left(\frac{K_t}{Y_t}\right)^{\alpha /(1-\alpha)} \frac{N_t}{P O P_t}
 $$
 
 \noindent To do this, you must impute the growth rate of the TFP factor using the production function.
 \\ \\ 
-a) \textbf{According to equation (1), what is the balanced growth path growth rate of output per working age person?} Use the notes from class to re-express this growth rate as a common global long-run growth rate. Based on US data, what is the value of this long-run growth rate over the sample period?
+a) \textbf{According to equation (1), what is the balanced growth path growth rate of output per working-age person?} Use the notes from class to re-express this growth rate as a common global long-run growth rate. Based on US data, what is the value of this long-run growth rate over the sample period?
 \\ \\ 
 \textbf{Answer:} Solving for $A_t$ gives $A_t=\left(\frac{\frac{Y_t}{N_t}}{\left(\frac{K_t}{Y_t}\right)^{1-\alpha} \frac{L_t}{N_t}}\right)^{1-\alpha}$. I then take natural logarithms and compute their difference (denoted by hats) to get
 $$
@@ -290,7 +287,7 @@ $$
 $$
 The balanced growth path growth rate for output-per-working age person is 2.1\%. I show the complete decomposition for long-run growth rates in 7(b).
 \\ \\ 
-b) \textbf{Calculate sample average annual growth rates for each growth accounting variable in equation (1) for each country}. Discuss the implied sources of GDP per working age person (people ages 16-65 or 20-69 or whatever you study define as the working age population) growth over the sample period for all three countries.
+b) \textbf{Calculate sample average annual growth rates for each growth accounting variable in equation (1) for each country}. Discuss the implied sources of GDP per working-age person (people ages 16-65 or 20-69 or whatever you study define as the working-age population) growth over the sample period for all three countries.
 \\ \\ 
 I decompose the long-run growth rate following the formula provided, which produces the average results presented below:
 
@@ -306,7 +303,7 @@ I decompose the long-run growth rate following the formula provided, which produ
     \end{tabular}
     \end{table}
 
-Where the values are in percentage units (\%). For both countries, we get the usual result on the literature: A major TFP component, followed by a considerable capital output ratio effect and finally a modest contribution of the population increment. 
+Where the values are in percentage units (\%). For both countries, we get the usual result from the literature: A major TFP component, followed by a considerable capital-output ratio effect, and finally a modest contribution of the population increment. 
 \\ \\ 
 To check whether there is balanced growth, it suffices to plot the decomposition for both countries, which is shown below.
 
@@ -317,29 +314,29 @@ To check whether there is balanced growth, it suffices to plot the decomposition
 
 \begin{figure}[htbp]
     \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_uk.pdf}
-    \caption{Growth accounting for UK}
+    \caption{Growth accounting for the UK}
 \end{figure}
 
-Under balanced growth, each component should be a straight horizontal line. Looking at the variability of of the growth rates in both countries, the hypothesis of balanced growth would
-be more likely to hold in the USA than in UK.
+Under balanced growth, each component should be a straight horizontal line. Looking at the variability of the growth rates in both countries, the hypothesis of balanced growth would
+be more likely to hold in the USA than in the UK.
 \\ \\ 
-The following potential sources can explain growth in $\widehat{\frac{Y}{N}}$ in the US and UK over the last 50 years:
+The following potential sources can explain the growth in $\widehat{\frac{Y}{N}}$ in the US and UK over the last 50 years:
 
 \begin{itemize}
-\item \textbf{Capital deepening}: Increased capital investment per worker, through more equipment, machinery, technology etc. This makes workers more productive.
-\item \textbf{Technological progress}: New innovations, discoveries and technologies that allow workers to produce more output for the same amount of input. Examples include IT and computers, automation, and new production techniques.
+\item \textbf{Capital deepening}: Increased capital investment per worker, through more equipment, machinery, technology, etc. This makes workers more productive.
+\item \textbf{Technological progress}: New innovations, discoveries, and technologies that allow workers to produce more output for the same amount of input. Examples include IT and computers, automation, and new production techniques.
 \item \textbf{Education/skills}: An increase in the education and skill level of the workforce over time.
-\item \textbf{Managerial/organizational innovations}: Better management practices, corporate restructurings, just-in-time inventory systems, supply chain management etc. can improve efficiency of workers, making them more productive.
+\item \textbf{Managerial/organizational innovations}: Better management practices, corporate restructurings, just-in-time inventory systems, supply chain management, etc. can improve the efficiency of workers, making them more productive.
 \end{itemize}
 
 \noindent c) \textbf{If you divide your sample period into two or three equally long sub-periods and calculate average growth rates over these sub-periods, do the same results hold?}
 \\ \\ 
-I split the sample into 2 periods: 1970-1994 and 1995-2019. The growth decomposition is provided separately for each periods in the subsequent tables.
+I split the sample into 2 periods: 1970-1994 and 1995-2019. The growth decomposition is provided separately for each period in the subsequent tables.
 
 % \usepackage{booktabs}
 \begin{table}[htbp]
     \centering
-    \caption{Growth Accounting by period, 1980-2019 (\%)}
+    \caption{Growth Accounting by period, 1970-2019 (\%)}
     \label{tab:growth-accounting_period}
     \begin{tabular}{@{}cccccc@{}}
     \toprule
@@ -352,16 +349,21 @@ I split the sample into 2 periods: 1970-1994 and 1995-2019. The growth decomposi
     \end{tabular}
     \end{table}
 
-d) \textbf{Plot GDP per working age person against each of the growth factors on the right-hand side of equation (1) in a single figure for each country, normalizing all variables to equal 100 in the initial sample year}. Based on these results, would you say that any of the three countries was likely on, or near, a balanced growth path during the sample period? Explain your answer.
+The results are similar to the overall levels of each growth component. There was a significant increase in $\widehat{A}$ in the US between 1995 and 2019 while it declined in the UK. Additionally, the growth rate of capital-output ratio increased significantly in the US. Furthermore, the growth rate of labor-per-capita declined in the US as expected.
+\\ \\ 
+d) \textbf{Plot GDP per working-age person against each of the growth factors on the right-hand side of equation (1) in a single figure for each country, normalizing all variables to equal 100 in the initial sample year}. Based on these results, would you say that any of the three countries was likely on, or near, a balanced growth path during the sample period? Explain your answer.
 
 \begin{figure}[htbp]
-    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_us_normalized.pdf}
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=0.8\textwidth]{out/Growth_Accounting_us_normalized.pdf}
     \caption{Normalized growth decomposition for US}
+    \centering
 \end{figure}
 
 \begin{figure}[htbp]
-    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=1\textwidth]{out/Growth_Accounting_uk_normalized.pdf}
+    \includegraphics[trim = 0in 3.2in 0in 0in, clip, width=0.8\textwidth]{out/Growth_Accounting_uk_normalized.pdf}
     \caption{Normalized growth decomposition for UK}
+    \centering
 \end{figure}
 
+Based on these results, it is difficult to conclude that either the US or the UK was on a balanced growth path since that would require both countries to have a horizontal slope for each growth component. However, in a relative sense, the BGP hypothesis is more likely to hold in the US than in the UK.
 \end{document}

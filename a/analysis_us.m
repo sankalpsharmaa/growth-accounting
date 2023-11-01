@@ -16,10 +16,11 @@ us_data = readtable(fullfile(mdata, 'us_clean.csv'));
 % open UK data
 uk_data = readtable(fullfile(mdata, 'uk_clean.csv'));
 
-us_data.i_t = us_data.i_t ./ 1000
-us_data.y_t =  us_data.y_t ./ 1000
-us_data.dk_t = us_data.dk_t ./ 1000
-us_data.cn = us_data.cn ./ 1000000
+us_data.i_t = us_data.i_t ./ 1000;
+us_data.y_t =  us_data.y_t ./ 1000;
+us_data.dk_t = us_data.dk_t ./ 1000;
+
+us_data.cn = us_data.cn ./ 1000000;
 
 % construct investment-GDP ratio
 us_data.IY = us_data.i_t * 100 ./ us_data.y_t;
@@ -188,13 +189,21 @@ print(savefig, fullfile(out, 'Capital_Series_PWT_US'),'-dpdf','-r0')
 % Recall that the capital share of income is defined by 
 % $\alpha_t = 1-\frac{CE_t}{Y_t-(HHGOS_t-HHCC_t) - (T_t-S_t)}$
 
+us_data.ce_t = us_data.nce_t ./ us_data.p_t;
+us_data.nos_t = us_data.nnos_t ./ us_data.p_t;
+us_data.tax_t = us_data.ntax_t ./ us_data.p_t;
+us_data.sub_t = us_data.nsub_t ./ us_data.p_t;
+us_data.net_tax_t = us_data.tax_t - us_data.sub_t
+
+alpha = mean(1 - us_data.ce_t ./ (us_data.y_t - us_data.nos_t - us_data.net_tax_t))
+
 %Use the literature value instead
 alpha = 1/3
 
 % Question 1-4: growth accounting 
 
 %First, lets compute labor series
-us_data.L   = us_data.h_t.*us_data.pop_t;
+us_data.L   = us_data.h_t;
 us_data.YN  = us_data.y_t ./ us_data.pop_t;
 
 %Remember(Y_t/N_t) = A_t^(1/(1-alpha)) (K_t/Y_t)^(alpha/(1-alpha)) L_t/N_t
